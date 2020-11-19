@@ -1,0 +1,19 @@
+
+<p>タイトル: <%= @title %></p>
+<p>内容: <%= @content %></p>
+
+<div class="container">
+  <div class="row">
+    <div class="column column-20">
+      <form action="/memos/<%= @id %>/edit" method="get">
+        <p><input type="submit" value="編集"></p>
+      </form>
+    </div>
+    <div class="column column-80">
+      <form action="/memos/<%= @id %>" method="post">
+        <input type="hidden" name="_method" value="DELETE"> 
+        <p><input type="submit" value="削除"></p>
+      </form>
+    </div>
+  </div>
+</div>

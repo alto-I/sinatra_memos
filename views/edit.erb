@@ -1,0 +1,8 @@
+<form action="/memos/<%= @id %>/edit" method="post">
+  <p>タイトル: <input type="text" name="title" value=<%= @title %>></p>
+  <p>内容:<br>
+    <textarea name="content"><%= @content %></textarea>
+  </p>
+  <input type="hidden" name="_method" value="PATCH">
+  <p><input type="submit" value="変更"></p>
+</form>

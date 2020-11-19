@@ -1,0 +1,9 @@
+<div class="float-right">
+  <p><input class="button button-outline" type="submit" value="追加" onclick="location.href='/memos/new'"></p>
+</div>
+<h2>memo list</h2>
+<ol>
+  <% @memos_json.each do |key, value| %>
+    <li><a href="/memos/<%= key %>"><%= value["title"] %></a></li>
+  <% end %>
+</ol>
