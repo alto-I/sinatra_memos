@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'sinatra'
-require 'sinatra/reloader'
 require 'json'
 require 'securerandom'
 
@@ -12,6 +11,12 @@ end
 def filedump(memos_file)
   File.open('memos.json', 'w') do |file|
     JSON.dump(memos_file, file)
+  end
+end
+
+helpers do
+  def h(text)
+    Rack::Utils.escape_html(text)
   end
 end
 
@@ -26,7 +31,7 @@ get '/memos/new' do
   erb :new
 end
 
-post '/memos/new' do
+post '/memos' do
   memos_json = fileread
   id = SecureRandom.uuid
   memos_json[id] = params
@@ -35,7 +40,7 @@ post '/memos/new' do
   redirect "/memos/#{@id}"
 end
 
-get %r{/memos/([\w-]*)} do |id|
+get '/memos/:id' do |id|
   memos_json = fileread
   @title = memos_json[id]['title']
   @content = memos_json[id]['content']
@@ -43,7 +48,7 @@ get %r{/memos/([\w-]*)} do |id|
   erb :show
 end
 
-get '/memos/*/edit' do |id|
+get '/memos/:id/edit' do |id|
   memos_json = fileread
   @title = memos_json[id]['title']
   @content = memos_json[id]['content']
@@ -51,17 +56,16 @@ get '/memos/*/edit' do |id|
   erb :edit
 end
 
-patch '/memos/*/edit' do |id|
+patch '/memos/:id' do |id|
   memos_json = fileread
   memos_json[id]['title'] = params[:title]
   memos_json[id]['content'] = params[:content]
   filedump(memos_json)
   @id = id
   redirect "/memos/#{@id}"
-  erb :edit
 end
 
-delete '/memos/*' do |id|
+delete '/memos/:id' do |id|
   memos_json = fileread
   memos_json.delete(id)
   filedump(memos_json)
