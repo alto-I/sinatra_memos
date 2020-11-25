@@ -4,6 +4,6 @@
 <h2>memo list</h2>
 <ol>
   <% @memos_json.each do |key, value| %>
-    <li><a href="/memos/<%= key %>"><%= h(value["title"]) %></a></li>
+    <li><a href="/memos/<%= h(key) %>"><%= h(value["title"]) %></a></li>
   <% end %>
 </ol>
