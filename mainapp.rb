@@ -1,18 +1,10 @@
 # frozen_string_literal: true
 
-require 'sinatra'
-require 'json'
-require 'securerandom'
+require "sinatra"
+require "securerandom"
+require_relative "memo"
 
-def fileread
-  JSON.parse(open('memos.json').read)
-end
-
-def filedump(memos_file)
-  File.open('memos.json', 'w') do |file|
-    JSON.dump(memos_file, file)
-  end
-end
+memo = Memo.new
 
 helpers do
   def h(text)
@@ -20,54 +12,46 @@ helpers do
   end
 end
 
-get '/memos' do
-  @memos_json = fileread
-  @title = 'main'
+get "/memos" do
+  @memos = memo.read_all
+  @title = "main"
   erb :top
 end
 
-get '/memos/new' do
-  @title = 'new'
+get "/memos/new" do
+  @title = "new"
   erb :new
 end
 
-post '/memos' do
-  memos_json = fileread
+post "/memos" do
   id = SecureRandom.uuid
-  memos_json[id] = params
-  filedump(memos_json)
-  @id = id
-  redirect "/memos/#{@id}"
+  memo.write(id, params[:title], params[:content])
+  redirect "/memos/#{id}"
 end
 
-get '/memos/:id' do |id|
-  memos_json = fileread
-  @title = memos_json[id]['title']
-  @content = memos_json[id]['content']
+get "/memos/:id" do |id|
+  read_memo = memo.read(id)
+  @title = read_memo[0]["title"]
+  @content = read_memo[0]["content"]
   @id = id
   erb :show
 end
 
-get '/memos/:id/edit' do |id|
-  memos_json = fileread
-  @title = memos_json[id]['title']
-  @content = memos_json[id]['content']
+get "/memos/:id/edit" do |id|
+  read_memo = memo.read(id)
+  @title = read_memo[0]["title"]
+  @content = read_memo[0]["content"]
   @id = id
   erb :edit
 end
 
-patch '/memos/:id' do |id|
-  memos_json = fileread
-  memos_json[id]['title'] = params[:title]
-  memos_json[id]['content'] = params[:content]
-  filedump(memos_json)
+patch "/memos/:id" do |id|
+  memo.edit(id, params[:title], params[:content])
   @id = id
   redirect "/memos/#{@id}"
 end
 
-delete '/memos/:id' do |id|
-  memos_json = fileread
-  memos_json.delete(id)
-  filedump(memos_json)
-  redirect '/memos'
+delete "/memos/:id" do |id|
+  memo.delete(id)
+  redirect "/memos"
 end

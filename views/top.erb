@@ -3,7 +3,7 @@
 </div>
 <h2>memo list</h2>
 <ol>
-  <% @memos_json.each do |key, value| %>
-    <li><a href="/memos/<%= h(key) %>"><%= h(value["title"]) %></a></li>
+  <% @memos.each do |memo| %>
+    <li><a href="/memos/<%= h(memo["id"]) %>"><%= h(memo["title"]) %></a></li>
   <% end %>
 </ol>
